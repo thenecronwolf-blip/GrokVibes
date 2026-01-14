@@ -1,18 +1,29 @@
 import streamlit as st
-import os
 import requests
-from dotenv import load_dotenv
 
-# Load env vars
-load_dotenv()
-API_KEY = os.getenv("GROK_API_KEY")
+# === PASTE YOUR GROK API KEY HERE FOR LOCAL TESTING ===
+# Get it from https://x.ai/api
+# WARNING: Never commit this file with your real key! Keep it private/local.
+API_KEY = "paste_your_grok_api_key_here"
 
-if not API_KEY:
-    st.error("⚠️ Please add your Grok API key to .env file!")
+if API_KEY == "paste_your_grok_api_key_here" or not API_KEY:
+    st.error("""
+    ⚠️ No Grok API key set!
+    
+    Paste your key directly into the API_KEY variable above (local testing only).
+    
+    For deployment: Use Streamlit Secrets instead—go to app settings > Secrets and add:
+    ```
+    GROK_API_KEY = "your_key_here"
+    ```
+    Then change the code to: API_KEY = st.secrets["GROK_API_KEY"]
+    
+    Get your key at https://x.ai/api
+    """)
     st.stop()
 
-# Grok API endpoint (check latest at https://x.ai/api)
-API_URL = "https://api.x.ai/v1/chat/completions"  # Confirm exact endpoint in docs
+# Grok API endpoint (double-check latest at https://x.ai/api)
+API_URL = "https://api.x.ai/v1/chat/completions"
 
 def query_grok(user_input):
     system_prompt = """
@@ -31,12 +42,12 @@ def query_grok(user_input):
     }
 
     payload = {
-        "model": "grok-beta",  # Or latest model—check docs
+        "model": "grok-beta",  # Or latest—check docs
         "messages": [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_input}
         ],
-        "temperature": 0.8,  # Creative but coherent
+        "temperature": 0.8,
         "max_tokens": 500
     }
 
@@ -45,7 +56,7 @@ def query_grok(user_input):
         response.raise_for_status()
         return response.json()["choices"][0]["message"]["content"]
     except Exception as e:
-        return f"😓 API error: {str(e)} (Check key/model at https://x.ai/api)"
+        return f"😓 API error: {str(e)} (Check key/model/endpoint at https://x.ai/api)"
 
 # Streamlit UI
 st.set_page_config(page_title="GrokVibes 💙", page_icon="🎧", layout="centered")
@@ -66,4 +77,4 @@ if st.button("Get Recs 🚀"):
     else:
         st.warning("Tell me your vibe first! 😏")
 
-st.caption("Open-source • Project #8 • Tweak the system prompt for more personality!")
+st.caption("Open-source • Project #8 • For public repo: Use secrets instead of hardcoding!")
