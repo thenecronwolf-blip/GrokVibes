@@ -3,175 +3,170 @@ import random
 import re
 
 # ==============================
-# 1. PAGE CONFIG & SYSTEM STATE
+# 1. PAGE SETUP & DYNAMIC STATE
 # ==============================
-st.set_page_config(page_title="GrokVibes", page_icon="🎧", layout="wide")
+st.set_page_config(page_title="GrokVibes // NEON", page_icon="🔮", layout="wide")
 
-# State Initialization
-if "favorites" not in st.session_state:
-    st.session_state.favorites = []
-if "ios_search" not in st.session_state:
-    st.session_state.ios_search = ""
+if "favorites" not in st.session_state: st.session_state.favorites = []
+if "search_query" not in st.session_state: st.session_state.search_query = ""
 
-# Callback for UI Micro-interactions (Fixes the crash)
-def set_search(mood_name):
-    st.session_state.ios_search = mood_name
+def set_search(val):
+    st.session_state.search_query = val
 
 # ==============================
-# 2. iOS 26 VISUAL ARCHITECTURE
+# 2. CYBER-NEON GRAPHICS (iOS 26 Style)
 # ==============================
 st.markdown("""
 <style>
-    /* iOS 26 Acrylic Backdrop */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+    
     [data-testid="stAppViewContainer"] {
-        background: radial-gradient(circle at 0% 0%, #1a1a1a 0%, #000 100%);
-        color: #FFFFFF;
+        background: #020205;
+        color: #ffffff;
+        font-family: 'Inter', sans-serif;
     }
 
-    /* Volumetric Glass Cards */
-    .ios-card {
+    /* Neon Pulse Animations */
+    @keyframes glow {
+        0% { box-shadow: 0 0 5px #ff0055; }
+        50% { box-shadow: 0 0 20px #ff0055; }
+        100% { box-shadow: 0 0 5px #ff0055; }
+    }
+
+    .neon-card {
         background: rgba(255, 255, 255, 0.03);
-        backdrop-filter: blur(25px) saturate(180%);
+        backdrop-filter: blur(15px);
         border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 28px;
-        padding: 24px;
+        border-radius: 20px;
+        padding: 20px;
         margin-bottom: 20px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        transition: transform 0.4s cubic-bezier(0.15, 0.83, 0.66, 1);
+        transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
     
-    .ios-card:hover {
-        transform: scale(1.02);
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.2);
+    .neon-card:hover {
+        transform: translateY(-10px);
+        border: 1px solid #00ffcc;
+        box-shadow: 0 10px 30px rgba(0, 255, 204, 0.2);
     }
 
-    /* Dynamic Island Input Styling */
     .stTextInput>div>div>input {
-        background: rgba(255, 255, 255, 0.07) !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        border-radius: 40px !important;
-        color: white !important;
-        padding: 15px 30px !important;
-        font-size: 1.1rem !important;
+        background: rgba(255, 255, 255, 0.05) !important;
+        border: 2px solid #333 !important;
+        border-radius: 15px !important;
+        color: #00ffcc !important;
+        font-weight: bold !important;
     }
 
-    .title-text {
-        font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-        font-weight: 800;
-        font-size: 52px;
-        letter-spacing: -2px;
-        background: linear-gradient(180deg, #fff 0%, #888 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin-bottom: 30px;
-    }
-
-    .pill {
-        background: rgba(255, 255, 255, 0.1);
-        color: rgba(255, 255, 255, 0.9);
-        padding: 5px 15px;
-        border-radius: 100px;
-        font-size: 12px;
-        font-weight: 600;
-        margin-right: 8px;
-        border: 1px solid rgba(255,255,255,0.05);
-    }
+    .pill-999 { background: #ff0055; color: white; padding: 2px 10px; border-radius: 10px; font-size: 10px; font-weight: bold; }
+    .pill-heavy { background: #7000ff; color: white; padding: 2px 10px; border-radius: 10px; font-size: 10px; font-weight: bold; }
+    .pill-retro { background: #00d4ff; color: white; padding: 2px 10px; border-radius: 10px; font-size: 10px; font-weight: bold; }
 </style>
 """, unsafe_allow_html=True)
 
 # ==============================
-# 3. THE EXPANDED ARCHIVE (300+ SIMULATED)
+# 3. THE HAND-CURATED VAULT (No Fillers)
 # ==============================
 VAULT = [
-    {"n": "Juice WRLD", "m": "Heartbreak", "t": ["999", "melodic", "legend"], "cat": "Music"},
-    {"n": "The Kid LAROI", "m": "Heartbreak", "t": ["melodic", "999", "pop-rap"], "cat": "Music"},
-    {"n": "Lil Peep", "m": "Sad", "t": ["emo", "grunge", "legend"], "cat": "Music"},
-    {"n": "Knocked Loose", "m": "Aggressive", "t": ["hardcore", "heavy", "breakdown"], "cat": "Music"},
-    {"n": "Bring Me The Horizon", "m": "Aggressive", "t": ["modern", "nu-metalcore", "electronic"], "cat": "Music"},
-    {"n": "Deftones", "m": "Dreamy", "t": ["shoegaze", "sexy", "atmospheric"], "cat": "Music"},
-    {"n": "Joji", "m": "Dreamy", "t": ["lofi", "sad", "aesthetic"], "cat": "Music"},
-    {"n": "Crystal Castles", "m": "Neon", "t": ["glitch", "cyberpunk", "electronic"], "cat": "Music"},
-    {"n": "MF DOOM", "m": "Lyrical", "t": ["abstract", "underground", "legend"], "cat": "Music"},
-    {"n": "Nana", "m": "Sad", "t": ["90s", "grunge", "emotional"], "cat": "Anime"},
-    {"n": "Chainsaw Man", "m": "Aggressive", "t": ["chaos", "intense", "modern"], "cat": "Anime"},
-    {"n": "Cowboy Bebop", "m": "Dreamy", "t": ["jazz", "space", "noir"], "cat": "Anime"},
-    {"n": "Cyberpunk: Edgerunners", "m": "Neon", "t": ["cyberpunk", "tragedy", "fast"], "cat": "Anime"}
+    # --- JUICE WRLD / 999 / EMO ---
+    {"n": "Juice WRLD", "m": "Sad", "t": ["999", "legend", "melodic"], "style": "pill-999"},
+    {"n": "Lil Peep", "m": "Sad", "t": ["emo", "grunge", "legend"], "style": "pill-999"},
+    {"n": "XXXTENTACION", "m": "Sad", "t": ["distorted", "vibe", "legend"], "style": "pill-999"},
+    {"n": "The Kid LAROI", "m": "Chill", "t": ["999", "pop-rap", "melodic"], "style": "pill-999"},
+    {"n": "Joji", "m": "Chill", "t": ["lofi", "aesthetic", "slow"], "style": "pill-999"},
+    {"n": "Polo G", "m": "Lyrical", "t": ["street", "melodic", "chicago"], "style": "pill-999"},
+    
+    # --- NU-METALCORE / HEAVY ---
+    {"n": "Knocked Loose", "m": "Aggressive", "t": ["hardcore", "heavy", "breakdown"], "style": "pill-heavy"},
+    {"n": "BMTH", "m": "Aggressive", "t": ["metalcore", "modern", "hybrid"], "style": "pill-heavy"},
+    {"n": "Bad Omens", "m": "Dark", "t": ["intense", "melodic", "modern"], "style": "pill-heavy"},
+    {"n": "Deftones", "m": "Dreamy", "t": ["shoegaze", "sexy", "atmospheric"], "style": "pill-heavy"},
+    {"n": "Sleep Token", "m": "Dark", "t": ["atmospheric", "mystery", "heavy"], "style": "pill-heavy"},
+    {"n": "Spiritbox", "m": "Dark", "t": ["metalcore", "ethereal", "modern"], "style": "pill-heavy"},
+    {"n": "Korn", "m": "Aggressive", "t": ["numetal", "90s", "classic"], "style": "pill-heavy"},
+    {"n": "Loathe", "m": "Dreamy", "t": ["shoegaze", "heavy", "experimental"], "style": "pill-heavy"},
+    
+    # --- 90s BOOM BAP / ALT RAP ---
+    {"n": "Wu-Tang Clan", "m": "Lyrical", "t": ["90s", "classic", "hardcore"], "style": "pill-retro"},
+    {"n": "MF DOOM", "m": "Lyrical", "t": ["alternative", "abstract", "legend"], "style": "pill-retro"},
+    {"n": "Nas", "m": "Lyrical", "t": ["90s", "storytelling", "classic"], "style": "pill-retro"},
+    {"n": "Mobb Deep", "m": "Dark", "t": ["90s", "gritty", "street"], "style": "pill-retro"},
+    {"n": "Tyler, The Creator", "m": "Chill", "t": ["alternative", "weird", "art"], "style": "pill-retro"},
+    {"n": "Earl Sweatshirt", "m": "Dark", "t": ["abstract", "depressing", "alternative"], "style": "pill-retro"},
+
+    # --- PHONK / GLITCH ---
+    {"n": "Crystal Castles", "m": "Dark", "t": ["glitch", "cyberpunk", "chaos"], "style": "pill-retro"},
+    {"n": "Kordhell", "m": "Aggressive", "t": ["phonk", "drift", "fast"], "style": "pill-retro"},
+    {"n": "Hensonn", "m": "Chill", "t": ["phonk", "dark", "smooth"], "style": "pill-retro"},
+
+    # --- ANIME VISUALS ---
+    {"n": "Chainsaw Man", "m": "Aggressive", "t": ["chaos", "intense", "modern"], "style": "pill-heavy"},
+    {"n": "Nana", "m": "Sad", "t": ["grunge", "punk", "90s"], "style": "pill-999"},
+    {"n": "Cowboy Bebop", "m": "Chill", "t": ["90s", "jazz", "space"], "style": "pill-retro"},
+    {"n": "Cyberpunk: Edgerunners", "m": "Neon", "t": ["tragedy", "fast", "glitch"], "style": "pill-retro"},
+    {"n": "Yu Yu Hakusho", "m": "Classic", "t": ["90s", "battle", "shonen"], "style": "pill-retro"},
+    {"n": "Tokyo Ghoul", "m": "Dark", "t": ["tragedy", "numetal", "ghoul"], "style": "pill-heavy"},
+    {"n": "Berserk (1997)", "m": "Dark", "t": ["pain", "90s", "dark-fantasy"], "style": "pill-heavy"},
 ]
 
-# Generators to fill the library
-for i in range(250):
-    VAULT.append({
-        "n": f"Artist {100+i}", 
-        "m": random.choice(["Sad", "Dark", "Neon", "Aggressive", "Lyrical"]), 
-        "t": ["discovery", "vault"], 
-        "cat": "Discover"
-    })
-
 # ==============================
-# 4. DISCOVERY INTERFACE
+# 4. NEON-FLEX UI LOGIC
 # ==============================
-st.markdown('<div class="title-text">Discovery</div>', unsafe_allow_html=True)
-
-# Dynamic Island Search Bar
-search_val = st.text_input("", placeholder="Search artists, moods, or genres...", key="ios_search")
+st.markdown('<h1 style="text-align:center; color:#00ffcc; text-shadow: 0 0 10px #00ffcc;">GROKVIBES DISCOVERY</h1>', unsafe_allow_html=True)
 
 # Mood Bubbles
-st.write("### Choose a Mood")
 mood_cols = st.columns(6)
-mood_options = ["Heartbreak", "Aggressive", "Dreamy", "Lyrical", "Dark", "Neon"]
+moods = ["Sad", "Aggressive", "Chill", "Lyrical", "Dark", "Neon"]
+for i, m in enumerate(moods):
+    mood_cols[i].button(m, key=f"m_{i}", on_click=set_search, args=(m,), use_container_width=True)
 
-for i, mood in enumerate(mood_options):
-    mood_cols[i].button(mood, key=f"btn_{mood}", on_click=set_search, args=(mood,))
+# Search Input
+query = st.text_input("Search the Vault", value=st.session_state.search_query, key="vault_search", placeholder="Type a name, genre, or vibe...")
 
-# ==============================
-# 5. RESULTS GRID & FAVORITES
-# ==============================
-if search_val:
-    q = search_val.lower()
-    results = [item for item in VAULT if q in item['n'].lower() or q in item['m'].lower() or any(q in t for t in item['t'])]
+# Display Results
+if query or st.session_state.search_query:
+    q = (query if query else st.session_state.search_query).lower()
+    matches = [i for i in VAULT if q in i['n'].lower() or q in i['m'].lower() or any(q in t for t in i['t'])]
     
-    if results:
-        col1, col2 = st.columns(2)
-        for i, item in enumerate(results[:24]):
-            with (col1 if i % 2 == 0 else col2):
-                tags_html = "".join([f"<span class='pill'>{t}</span>" for t in item['t']])
-                
-                # The Acrylic Card
+    if matches:
+        cols = st.columns(3)
+        for idx, item in enumerate(matches):
+            with cols[idx % 3]:
                 st.markdown(f"""
-                    <div class="ios-card">
-                        <div style="font-size: 11px; font-weight: 800; color: #ff3b30; text-transform: uppercase; margin-bottom: 4px;">{item['cat']} • {item['m']}</div>
-                        <div style="font-size: 22px; font-weight: 700; margin-bottom: 12px;">{item['n']}</div>
-                        {tags_html}
+                    <div class="neon-card">
+                        <span class="{item['style']}">{item['m'].upper()}</span>
+                        <div style="font-size:24px; font-weight:900; margin-top:10px; color:white;">{item['n']}</div>
+                        <div style="margin-top:10px;">{' '.join([f'<span style="color:#666; font-size:12px; margin-right:8px;">#{t}</span>' for t in item['t']])}</div>
                     </div>
                 """, unsafe_allow_html=True)
                 
-                # Card Actions
-                act1, act2 = st.columns([1, 1])
-                with act1:
-                    st.markdown(f"<a href='https://www.youtube.com/results?search_query={item['n']}' style='color:#007aff; text-decoration:none; font-size:14px; font-weight:600;'>Listen Now ›</a>", unsafe_allow_html=True)
-                with act2:
-                    if st.button(f"❤️ Favorite", key=f"fav_{item['n']}_{i}"):
+                # Action Buttons
+                btn_col1, btn_col2 = st.columns(2)
+                with btn_col1:
+                    st.markdown(f"[▶ Stream](https://www.youtube.com/results?search_query={item['n'].replace(' ', '+')})")
+                with btn_col2:
+                    if st.button(f"♡ Save", key=f"fav_{idx}"):
                         if item['n'] not in st.session_state.favorites:
                             st.session_state.favorites.append(item['n'])
-                            st.toast(f"Added {item['n']} to Library", icon="✅")
+                            st.toast(f"Saved {item['n']} to Library")
     else:
-        st.info("No nodes found in the current frequency.")
+        st.warning("No matches in the current frequency. Try '999' or 'Hardcore'.")
+else:
+    # Home View
+    st.markdown("### 🔥 Trending in the Vault")
+    home_cols = st.columns(4)
+    for i, item in enumerate(random.sample(VAULT, 4)):
+        with home_cols[i]:
+            st.markdown(f'<div class="neon-card"><div style="font-weight:bold;">{item["n"]}</div></div>', unsafe_allow_html=True)
 
 # ==============================
-# 6. SIDEBAR LIBRARY
+# 5. SIDEBAR LIBRARY (Acrylic)
 # ==============================
 with st.sidebar:
-    st.markdown("## ❤️ Your Library")
+    st.markdown("## 💜 YOUR LIBRARY")
     if not st.session_state.favorites:
-        st.caption("No favorites saved yet.")
-    for fav in st.session_state.favorites:
-        st.markdown(f"""
-            <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 18px; margin-bottom: 8px; border: 1px solid rgba(255,255,255,0.1);">
-                <span style="font-size: 14px; font-weight: 600;">{fav}</span>
-            </div>
-        """, unsafe_allow_html=True)
-    
-    if st.button("Clear Library"):
+        st.caption("Library empty. Save some vibes.")
+    for f in st.session_state.favorites:
+        st.markdown(f"""<div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:10px; margin-bottom:5px;">{f}</div>""", unsafe_allow_html=True)
+    if st.button("Clear Archive"):
         st.session_state.favorites = []
         st.rerun()
