@@ -1,3 +1,5 @@
 streamlit
 python-dotenv
 requests  # for API calls
+pandas
+google-generativeai
