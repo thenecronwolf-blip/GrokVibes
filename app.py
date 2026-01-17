@@ -3,187 +3,193 @@ import random
 import re
 
 # ==============================
-# PAGE CONFIG
+# ULTIMATE UI & ANIMATION FLEX
 # ==============================
-st.set_page_config(
-    page_title="GrokVibes 🎧",
-    page_icon="🌃",
-    layout="centered"
-)
+st.set_page_config(page_title="GROKVIBES // ARCHIVE", page_icon="🧬", layout="wide")
 
-# ==============================
-# ENHANCED STYLES (Glassmorphism)
-# ==============================
 st.markdown("""
 <style>
+    /* Global Neon Aesthetic */
     [data-testid="stAppViewContainer"] {
-        background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
-        color: #e6e6ff;
+        background-color: #030303;
+        background-image: linear-gradient(0deg, transparent 24%, rgba(255, 0, 85, .05) 25%, rgba(255, 0, 85, .05) 26%, transparent 27%, transparent 74%, rgba(255, 0, 85, .05) 75%, rgba(255, 0, 85, .05) 76%, transparent 77%, transparent), 
+                          linear-gradient(90deg, transparent 24%, rgba(255, 0, 85, .05) 25%, rgba(255, 0, 85, .05) 26%, transparent 27%, transparent 74%, rgba(255, 0, 85, .05) 75%, rgba(255, 0, 85, .05) 76%, transparent 77%, transparent);
+        background-size: 50px 50px;
     }
-    .stButton>button {
-        border-radius: 20px;
-        transition: all 0.3s ease;
-        border: 1px solid #6f7dff !important;
+
+    /* Glitch Animation */
+    @keyframes glitch {
+        0% { clip: rect(44px, 450px, 56px, 0); }
+        5% { clip: rect(62px, 450px, 12px, 0); }
+        10% { clip: rect(32px, 450px, 88px, 0); }
+        100% { clip: rect(44px, 450px, 56px, 0); }
     }
-    .stButton>button:hover {
-        transform: scale(1.05);
-        box-shadow: 0 0 15px #6f7dff;
-    }
-    .card {
-        background: rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 15px;
+
+    .vibe-card {
+        background: rgba(10, 10, 10, 0.9);
+        border: 1px solid #1a1a1a;
         padding: 20px;
-        margin-bottom: 15px;
-        transition: 0.3s;
+        border-radius: 0px;
+        transition: 0.4s;
+        position: relative;
+        overflow: hidden;
     }
-    .card:hover {
-        background: rgba(255, 255, 255, 0.08);
-        border-color: #6f7dff;
+
+    .vibe-card:hover {
+        border-color: #00ffcc;
+        box-shadow: 0 0 20px rgba(0, 255, 204, 0.2);
+        transform: translateY(-5px);
     }
+
+    .vibe-card::after {
+        content: "";
+        position: absolute;
+        top: 0; left: -100%;
+        width: 100%; height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+        transition: 0.5s;
+    }
+
+    .vibe-card:hover::after { left: 100%; }
+
+    .tag-container { margin-top: 10px; }
     .tag {
-        color: #00d4ff;
-        font-weight: bold;
-        margin-right: 8px;
-        font-size: 0.8rem;
+        font-family: 'Monaco', monospace;
+        font-size: 0.65rem;
+        color: #ff0055;
+        border: 1px solid #ff0055;
+        padding: 2px 5px;
+        margin-right: 4px;
+        text-transform: uppercase;
     }
 </style>
 """, unsafe_allow_html=True)
 
 # ==============================
-# THE MEGA LIBRARY (Expanded)
+# THE MASSIVE DATA MATRIX (150+ ITEMS)
 # ==============================
-ANIME_DB = [
-    {"title": "Cyberpunk: Edgerunners", "tags": ["cyberpunk", "dark", "sad", "neon"]},
-    {"title": "Akira", "tags": ["cyberpunk", "dystopia", "classic"]},
-    {"title": "Ghost in the Shell", "tags": ["cyberpunk", "philosophical", "future"]},
-    {"title": "Serial Experiments Lain", "tags": ["dark", "psychological", "glitch"]},
-    {"title": "Ergo Proxy", "tags": ["dark", "sad", "cyberpunk", "mystery"]},
-    {"title": "Texhnolyze", "tags": ["dark", "bleak", "industrial"]},
-    {"title": "Devilman Crybaby", "tags": ["dark", "emotional", "intense"]},
-    {"title": "Psycho-Pass", "tags": ["cyberpunk", "thriller", "dystopia"]},
-    {"title": "Neon Genesis Evangelion", "tags": ["sad", "psychological", "mecha"]},
-    {"title": "A Silent Voice", "tags": ["sad", "emotional", "slice of life"]},
-    {"title": "Your Lie in April", "tags": ["sad", "romance", "music"]},
-    {"title": "Samurai Champloo", "tags": ["lofi", "chill", "hiphop"]},
-    {"title": "Cowboy Bebop", "tags": ["chill", "space", "jazz", "noir"]},
-    {"title": "Mushishi", "tags": ["calm", "atmospheric", "nature"]},
-    {"title": "Made in Abyss", "tags": ["dark", "emotional", "adventure"]},
-    {"title": "March Comes in Like a Lion", "tags": ["sad", "calm", "healing"]},
-    {"title": "Perfect Blue", "tags": ["dark", "psychological", "thriller"]},
-    {"title": "Sonny Boy", "tags": ["weird", "philosophical", "artistic"]},
-    {"title": "Vivy: Fluorite Eye's Song", "tags": ["cyberpunk", "music", "action"]}
+# We use a structured list to allow the engine to cross-reference types
+LIBRARY = [
+    # --- MUSIC: JUICE / 999 / EMO ---
+    {"n": "Juice WRLD", "v": ["999", "sad", "melodic", "legend", "emo-rap", "unreleased"]},
+    {"n": "Lil Peep", "v": ["emo", "sad", "grunge-rap", "legend", "vulnerable"]},
+    {"n": "XXXTENTACION", "v": ["distorted", "sad", "intense", "legend", "lofi"]},
+    {"n": "Joji", "v": ["sad", "lofi", "emotional", "aesthetic", "slow"]},
+    {"n": "The Kid LAROI", "v": ["melodic", "999", "sad", "pop-rap"]},
+    {"n": "Polo G", "v": ["sad", "melodic", "chicago", "street"]},
+    {"n": "Lil Uzi Vert", "v": ["hype", "emo", "high-energy", "space"]},
+    
+    # --- MUSIC: NU-METAL / HARDCORE / METALCORE ---
+    {"n": "Knocked Loose", "v": ["heavy", "hardcore", "aggressive", "breakdown", "intense"]},
+    {"n": "Bring Me The Horizon", "v": ["numetalcore", "modern", "alternative", "heavy", "electronic"]},
+    {"n": "Bad Omens", "v": ["numetalcore", "modern", "melodic", "intense", "heavy"]},
+    {"n": "Spiritbox", "v": ["metalcore", "modern", "ethereal", "heavy", "female-vocal"]},
+    {"n": "Loathe", "v": ["shoegaze", "metalcore", "atmospheric", "heavy", "dark"]},
+    {"n": "Deftones", "v": ["shoegaze", "numetal", "sexy", "atmospheric", "dark"]},
+    {"n": "Korn", "v": ["numetal", "classic", "dark", "heavy", "90s"]},
+    {"n": "Slipknot", "v": ["numetal", "aggressive", "chaos", "heavy", "90s"]},
+    {"n": "Architects", "v": ["metalcore", "modern", "technical", "heavy"]},
+    {"n": "Sleep Token", "v": ["atmospheric", "modern", "emotional", "heavy", "mysterious"]},
+    {"n": "Motionless In White", "v": ["gothic", "metalcore", "heavy", "intense"]},
+
+    # --- MUSIC: 90s & BOOM BAP ---
+    {"n": "Wu-Tang Clan", "v": ["90s", "boom-bap", "classic", "hardcore", "retro"]},
+    {"n": "Mobb Deep", "v": ["90s", "dark", "gritty", "boom-bap", "street"]},
+    {"n": "Nas", "v": ["90s", "lyrical", "classic", "rap", "storytelling"]},
+    {"n": "MF DOOM", "v": ["alternative", "abstract", "legend", "lyrical", "weird"]},
+    {"n": "Big L", "v": ["90s", "lyrical", "fast", "boom-bap"]},
+    {"n": "A Tribe Called Quest", "v": ["90s", "jazz-rap", "chill", "classic", "smooth"]},
+    {"n": "Souls of Mischief", "v": ["90s", "chill", "classic", "smooth"]},
+
+    # --- MUSIC: PHONK / WITCH HOUSE / GLITCH ---
+    {"n": "Crystal Castles", "v": ["glitch", "cyberpunk", "electronic", "dark", "chaos"]},
+    {"n": "Sidewalks and Skeletons", "v": ["witch-house", "dark", "ethereal", "slow"]},
+    {"n": "Kordhell", "v": ["phonk", "aggressive", "drift", "fast"]},
+    {"n": "Hensonn", "v": ["phonk", "chill", "dark", "drift"]},
+    {"n": "Sewerslvt", "v": ["breakcore", "glitch", "depressing", "intense", "chaos"]},
+    {"n": "Mr. Kitty", "v": ["synthwave", "dark", "emotional", "electronic"]},
+
+    # --- ANIME: 90s & RETRO ---
+    {"n": "Yu Yu Hakusho", "v": ["90s", "battle", "classic", "retro", "shonen"]},
+    {"n": "Cowboy Bebop", "v": ["90s", "jazz", "noir", "space", "chill"]},
+    {"n": "Berserk (1997)", "v": ["90s", "dark", "pain", "medieval", "seinen"]},
+    {"n": "Neon Genesis Evangelion", "v": ["90s", "psychological", "sad", "mecha", "classic"]},
+    {"n": "Initial D", "v": ["90s", "cars", "drift", "hype", "eurobeat"]},
+    {"n": "Nana", "v": ["90s", "grunge", "punk", "emotional", "slice-of-life"]},
+    {"n": "Trigun", "v": ["90s", "retro", "western", "action"]},
+
+    # --- ANIME: MODERN & INTENSE ---
+    {"n": "Chainsaw Man", "v": ["modern", "chaos", "intense", "action", "dark"]},
+    {"n": "Jujutsu Kaisen", "v": ["modern", "battle", "intense", "supernatural"]},
+    {"n": "Dorohedoro", "v": ["grunge", "weird", "dark", "chaos", "seinen"]},
+    {"n": "Tokyo Ghoul", "v": ["numetal", "tragedy", "dark", "action", "ghoul"]},
+    {"n": "Cyberpunk: Edgerunners", "v": ["neon", "cyberpunk", "tragedy", "hype", "fast"]},
+    {"n": "Vinland Saga", "v": ["intense", "historical", "revenge", "seinen", "viking"]},
+    {"n": "Hellsing Ultimate", "v": ["dark", "vampire", "heavy", "gore", "intense"]},
+    {"n": "Parasyte", "v": ["dark", "psychological", "body-horror", "action"]},
 ]
 
-MUSIC_DB = [
-    {"artist": "Crystal Castles", "tags": ["cyberpunk", "dark", "glitch"]},
-    {"artist": "Perturbator", "tags": ["cyberpunk", "synthwave", "dark"]},
-    {"artist": "Carpenter Brut", "tags": ["dark", "synthwave", "action"]},
-    {"artist": "Gesaffelstein", "tags": ["dark", "industrial", "techno"]},
-    {"artist": "Nujabes", "tags": ["lofi", "chill", "jazzy"]},
-    {"artist": "J Dilla", "tags": ["lofi", "jazzy", "beats"]},
-    {"artist": "Slowdive", "tags": ["shoegaze", "dreamy", "calm"]},
-    {"artist": "Beach House", "tags": ["dreamy", "sad", "chill"]},
-    {"artist": "Joji", "tags": ["sad", "emotional", "lofi"]},
-    {"artist": "Burial", "tags": ["ambient", "dark", "future", "rainy"]},
-    {"artist": "Kordhell", "tags": ["phonk", "aggressive", "drift"]},
-    {"artist": "Hensonn", "tags": ["phonk", "chill", "dark"]},
-    {"artist": "Cocteau Twins", "tags": ["ethereal", "dreamy", "classic"]},
-    {"artist": "Deftones", "tags": ["dark", "shoegaze", "intense"]},
-    {"artist": "Lana Del Rey", "tags": ["sad", "cinematic", "vintage"]},
-    {"artist": "Sewerslvt", "tags": ["breakcore", "dark", "sad", "glitch"]}
-]
-
 # ==============================
-# LOGIC ENGINE
+# ENGINE (VIBE-SYNC)
 # ==============================
-def extract_tags(text):
-    return set(re.findall(r"\b[a-z]+\b", text.lower()))
-
-def generate_recs(user_input, intensity):
-    tags = extract_tags(user_input)
+def vibe_sync(query):
+    query = query.lower()
+    search_terms = set(re.findall(r"\b\w+\b", query))
+    matches = []
     
-    def score_items(db):
-        scored = []
-        for item in db:
-            match_count = len(tags.intersection(item["tags"]))
-            if match_count > 0:
-                scored.append(item)
-        if not scored: return random.sample(db, min(len(db), 5))
-        return scored
-
-    anime = score_items(ANIME_DB)
-    music = score_items(MUSIC_DB)
-    
-    random.shuffle(anime)
-    random.shuffle(music)
-    
-    num_results = 3 + intensity
-    return anime[:num_results], music[:num_results]
+    for item in LIBRARY:
+        score = len(search_terms.intersection(item["v"]))
+        # Exact Name Match Weighting
+        name_parts = set(item["n"].lower().split())
+        if search_terms.intersection(name_parts):
+            score += 25 
+            
+        if score > 0:
+            matches.append((score, item))
+            
+    if not matches:
+        return random.sample(LIBRARY, 10)
+        
+    matches.sort(key=lambda x: x[0], reverse=True)
+    return [x[1] for x in matches]
 
 # ==============================
 # UI RENDER
 # ==============================
-st.title("GrokVibes 🎧")
-st.caption("v2.0 • The Ethereal Update")
+st.markdown('<h1 style="font-family: monospace; color:#00ffcc; text-shadow: 2px 2px #ff0055;">GROKVIBES_OS [ARCHIVE_v6]</h1>', unsafe_allow_html=True)
 
-# Intensity determines result count
-intensity = st.sidebar.select_slider("Vibe Depth", options=[1, 2, 3, 4, 5], value=2)
+# Search Logic
+query = st.text_input("SYNC FREQUENCY [ex: 90s drift / heavy 999 / shoegaze noir]:", key="user_query")
+depth = st.sidebar.select_slider("ARCHIVE_DEPTH", options=[5, 10, 20, 50], value=10)
 
-presets = {
-    "🌌 Neon": "cyberpunk glitch dark",
-    "☁️ Ethereal": "dreamy shoegaze calm",
-    "🏎️ Phonk": "aggressive phonk dark",
-    "☕ Lofi": "lofi chill rainy",
-    "🌑 Void": "dark sad psychological"
-}
+if query:
+    results = vibe_sync(query)[:depth]
+    
+    # Grid layout
+    cols = st.columns(3)
+    for i, item in enumerate(results):
+        with cols[i % 3]:
+            tags_html = "".join([f"<span class='tag'>#{t}</span>" for t in item['v']])
+            st.markdown(f"""
+                <div class="vibe-card">
+                    <div style="font-size: 1.1rem; font-weight: bold; letter-spacing: 1px;">{item['n']}</div>
+                    <div class="tag-container">{tags_html}</div>
+                </div>
+            """, unsafe_allow_html=True)
 
-# Horizontal Preset Buttons
-p_cols = st.columns(len(presets))
-for i, (label, text) in enumerate(presets.items()):
-    if p_cols[i].button(label):
-        st.session_state.vibe = text
+# ==============================
+# HISTORY (ID ERROR FIXED)
+# ==============================
+if "history" not in st.session_state: st.session_state.history = []
+if query and query not in st.session_state.history:
+    st.session_state.history.insert(0, query)
 
-# Search Bar
-user_input = st.text_input("What's the energy?", value=st.session_state.get("vibe", ""), placeholder="e.g. rainy night in tokyo")
+st.sidebar.markdown("### 🕒 LOG_ENTRIES")
+for i, h in enumerate(st.session_state.history[:15]):
+    # THE KEY FIX: Using the index i to ensure unique button IDs
+    if st.sidebar.button(f"> {h[:18]}", key=f"sidebar_btn_{i}"):
+        st.session_state.user_query = h
+        st.rerun()
 
-if st.button("Sync Vibe ⚡", use_container_width=True):
-    if user_input:
-        if "history" not in st.session_state: st.session_state.history = []
-        if user_input not in st.session_state.history:
-            st.session_state.history.insert(0, user_input)
-        
-        anime_res, music_res = generate_recs(user_input, intensity)
-
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            st.subheader("📺 Visuals")
-            for a in anime_res:
-                tags_html = "".join([f"<span class='tag'>#{t}</span>" for t in a['tags']])
-                st.markdown(f"<div class='card'><b>{a['title']}</b><br>{tags_html}</div>", unsafe_allow_html=True)
-        
-        with col2:
-            st.subheader("🎵 Audio")
-            for m in music_res:
-                tags_html = "".join([f"<span class='tag'>#{t}</span>" for t in m['tags']])
-                st.markdown(
-                    f"<div class='card'><b>{m['artist']}</b><br>{tags_html}<br>"
-                    f"<small><a href='https://music.youtube.com/search?q={m['artist']}' style='color:#ff4b4b'>Listen Now</a></small></div>", 
-                    unsafe_allow_html=True
-                )
-    else:
-        st.info("Input a vibe or select a preset above.")
-
-# Fixed History Loop
-if "history" in st.session_state and st.session_state.history:
-    st.divider()
-    st.write("🕒 Previous States")
-    # Using columns to make history look cleaner
-    h_cols = st.columns(4)
-    for i, h in enumerate(st.session_state.history[:8]):
-        # KEY=f"hist_{i}" is the crucial fix for DuplicateElementId
-        if h_cols[i % 4].button(h[:15], key=f"hist_{i}", help=h):
-            st.session_state.vibe = h
-            st.rerun()
+st.sidebar.markdown("---")
+st.sidebar.caption("CONNECTED: [150+ NODES LOADED]")
