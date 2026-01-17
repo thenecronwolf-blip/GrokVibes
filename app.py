@@ -135,4 +135,57 @@ st.markdown("<hr>", unsafe_allow_html=True)
 intensity = st.slider("Vibe intensity", 0, 3, 1)
 
 presets = {
-   
+    "🌃 Cyberpunk": "neon cyberpunk night",
+    "💔 Sad": "sad lonely night",
+    "🌿 Chill": "lofi calm vibes",
+    "🖤 Dark": "dark emotional anime",
+}
+
+cols = st.columns(len(presets))
+for col, (label, vibe) in zip(cols, presets.items()):
+    if col.button(label):
+        st.session_state.vibe = vibe
+
+user_input = st.text_input(
+    "Drop your vibe 👇",
+    value=st.session_state.get("vibe", ""),
+    placeholder="sad cyberpunk night drive"
+)
+
+if st.button("Get Recs 🚀"):
+    if user_input.strip():
+        st.session_state.history.insert(0, user_input)
+
+        anime, music = generate_recs(user_input, intensity)
+
+        st.markdown("## 📺 Anime")
+        for a in anime:
+            st.markdown(
+                f"<div class='card'><b>{a['title']}</b><br>"
+                f"{' '.join(f'<span class=tag>#{t}</span>' for t in a['tags'])}"
+                f"</div>",
+                unsafe_allow_html=True
+            )
+
+        st.markdown("## 🎧 Music")
+        for m in music:
+            query = m["artist"].replace(" ", "+")
+            st.markdown(
+                f"<div class='card'><b>{m['artist']}</b><br>"
+                f"{' '.join(f'<span class=tag>#{t}</span>' for t in m['tags'])}<br>"
+                f"<a href='https://www.youtube.com/results?search_query={query}' target='_blank'>YouTube</a> | "
+                f"<a href='https://open.spotify.com/search/{query}' target='_blank'>Spotify</a>"
+                f"</div>",
+                unsafe_allow_html=True
+            )
+    else:
+        st.warning("Give me a vibe to work with 😏")
+
+if st.session_state.history:
+    st.markdown("<hr>", unsafe_allow_html=True)
+    st.markdown("### 🕘 Recent Vibes")
+    for h in st.session_state.history[:6]:
+        if st.button(h):
+            st.session_state.vibe = h
+
+st.caption("Open-source • Local database • No APIs • Neon forever 🌃")
